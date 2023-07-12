@@ -1,6 +1,50 @@
-name: # the name of the action
-description: # additional descriptive info about the action
+name: Configure environment
+description: Prepare build environment with a common steps
+
+inputs:
+  ANSIBLE_PYTHON_INTERPRETER:
+    description: Location of python interpreter
+    required: false
+    default: '/opt/pipx/venvs/ansible-core/bin/python'
+  BOT_SSH_KEY:
+    description: BOT's SSH key used for iteract with GitHub
+    required: true
+    default: ''
+  GITHUB_TOKEN:
+    description: GitHub token
+    required: true
+    default: ''
+
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-# for additional options, see: https://help.github.com/en/articles/metadata-syntax-for-github-actions
+  using: composite
+  steps:
+    - name: Install Poetry
+      run: pipx install poetry
+
+    - name: Set up Python environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'poetry'
+
+    - name: Configure GitHub credentials
+      run: git config --global url."https://${{ inputs.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+    - name: Install dependencies
+      run: poetry install --with dev,testing,codestyle,deployment --no-interaction
+
+    - name: Install Ansible dependencies
+      run: pip --python ${{ env.ANSIBLE_PYTHON_INTERPRETER }} install boto3 botocore stringcase troposphere requests
+
+    - name: Install SSH Key
+      run: |
+        mkdir ~/.ssh && chmod 700 ~/.ssh
+        echo "${{ inputs.BOT_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+        ssh-add ~/.ssh/id_rsa
+
+    - name: Install any galaxy modules
+      run: |
+        test -f ansible/requirements.yml && \
+        ansible-galaxy install -r ansible/requirements.yml --force || \
+        echo "Nothing to install - skipping!"

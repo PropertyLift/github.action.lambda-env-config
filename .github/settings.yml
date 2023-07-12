@@ -1,13 +1,13 @@
 # see: https://github.com/probot/settings
 
 repository:
-  name: template.github-action # replace
-  description: Basic template repo for creating Github actions # replace
+  name: github.action.lambda-env-config # replace
+  description: Common step which will prepare environment for building # replace
   topics: # replace
-  private: false
+  private: true
   has_issues: false
   has_wiki: false
-  is_template: true # replace
+  is_template: false # replace
   default_branch: main
   allow_squash_merge: false
   allow_merge_commit: true
