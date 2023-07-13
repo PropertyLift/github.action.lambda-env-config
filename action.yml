@@ -23,6 +23,7 @@ runs:
   using: composite
   steps:
     - name: Install Poetry
+      shell: bash
       run: pipx install poetry
 
     - name: Set up Python environment
@@ -32,15 +33,19 @@ runs:
         cache: 'poetry'
 
     - name: Configure GitHub credentials
+      shell: bash
       run: git config --global url."https://${{ inputs.githubToken }}@github.com/".insteadOf "https://github.com/"
 
     - name: Install dependencies
+      shell: bash
       run: poetry install --with dev,testing,codestyle,deployment --no-interaction
 
     - name: Install Ansible dependencies
+      shell: bash
       run: pip --python ${{ inputs.ansiblePythonInterpreter }} install ${{ inputs.dependenciesList }}
 
     - name: Install SSH Key
+      shell: bash
       run: |
         mkdir ~/.ssh && chmod 700 ~/.ssh
         echo "${{ inputs.botSshKey }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
@@ -48,6 +53,7 @@ runs:
         ssh-add ~/.ssh/id_rsa
 
     - name: Install any galaxy modules
+      shell: bash
       run: |
         test -f ansible/requirements.yml && \
         ansible-galaxy install -r ansible/requirements.yml --force || \
