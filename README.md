@@ -1,6 +1,6 @@
 # Lambda build environment configurator
 
-A github action to simply configure the pipeline's environment and simplify managing of whole processes.
+A github action which will help to configure the pipeline's environment and simplify managing of another pipelines by combining in one place a set of required actions.
 
 ## How to use:
 
@@ -11,8 +11,8 @@ A github action to simply configure the pipeline's environment and simplify mana
 name: Configure environment
 uses: propertylift/github.action.lambda-env-config@latest
 with:
-  BOT_SSH_KEY: ${{ secrets.BOT_SSH_KEY }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  botSshKey: ${{ secrets.BOT_SSH_KEY }}
+  githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 
@@ -20,7 +20,7 @@ with:
 
 | Parameter Name                     | Description | Required | Default |
 |------------------------------------|-------------|----------|---------|
-| ANSIBLE_PYTHON_INTERPRETER         | Location of python interpreter | No | /opt/pipx/venvs/ansible-core/bin/python |
-| BOT_SSH_KEY                        | BOT's SSH key used for iteract with GitHub | Yes | - |
-| GITHUB_TOKEN                       | GITHUB_TOKEN | Yes | - |
+| ansiblePythonInterpreter           | Location of python interpreter | No | /opt/pipx/venvs/ansible-core/bin/python |
+| botSshKey                          | BOT's SSH key used for iteract with GitHub | Yes | - |
+| githubToken                        | GITHUB_TOKEN | Yes | - |
 
